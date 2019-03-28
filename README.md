@@ -33,7 +33,7 @@ dotnet build
 In order to create migration, apply it and build the Web project and all it's dependencies.
 
 ```bash
-dotnet run -p src/Web/Web.csproj
+dotnet run -p FindInfoByURL/FindInfoByURL.csproj
 ```
 
 In order to run the web server. Open [http://localhost:5000](http://localhost:3000) or [https://localhost:5001](https://localhost:5001) to view it in the browser.

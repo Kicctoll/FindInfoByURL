@@ -88,10 +88,14 @@ $("document").ready(() => {
 
                     if (prop === "URL" || prop === "url") {
                         let a = document.createElement("a");
+
                         $(a).attr("href", "#");
                         $(a).attr("id", indexOfRow + '_' + "url_id");
+
+                        $(a).click(handlingUrlClick);
                         $(a).text(request[prop]);
 
+                        $(td).attr("data-url", request[prop]);
                         $(td).html(a);
                     } else {
                         $(td).html(request[prop]);
@@ -113,5 +117,18 @@ $("document").ready(() => {
             $(tr).append(td);
             $(statisticsTable).append(tr);
         }
+    }
+
+    function handlingUrlClick(event) {
+        event.preventDefault();
+
+        const relatedRows = $(statisticsTable).find(`td[data-url='${$(event.target).text()}']`).parent();
+        console.log(relatedRows);
+
+        const dates = relatedRows
+            .find("td[data-type='dateTime']")
+            .toArray()
+            .map(td => $(td).text());
+
     }
 });

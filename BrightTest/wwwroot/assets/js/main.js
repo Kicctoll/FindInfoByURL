@@ -56,4 +56,62 @@ $("document").ready(() => {
 
         $(table).append(tr);
     }
+
+    const statisticsBtn = $("#statistics-tab");
+    const statisticsTable = $("#statisticsTable");
+
+    $(statisticsBtn).click(() => {
+        fetch(`${host}api/home/requests`)
+            .then(async (response) => {
+                let requests = await response.json();
+
+                InitializeStatisticsTable(requests);
+            });
+    });
+
+    function InitializeStatisticsTable(requests) {
+        $(statisticsTable).find("tr[data-index]").remove();
+
+        if (requests.length !== 0) {
+            let indexOfRow = 0;
+
+            for (const request of requests) {
+                let tr = document.createElement("tr");
+                $(tr).attr("data-index", indexOfRow);
+
+                for (const prop in request) {
+                    if (prop === "Id" || prop === "id")
+                        continue;
+
+                    let td = document.createElement("td");
+                    $(td).attr("data-type", prop.toString());
+
+                    if (prop === "URL" || prop === "url") {
+                        let a = document.createElement("a");
+                        $(a).attr("href", "#");
+                        $(a).attr("id", indexOfRow + '_' + "url_id");
+                        $(a).text(request[prop]);
+
+                        $(td).html(a);
+                    } else {
+                        $(td).html(request[prop]);
+                    }
+
+                    $(tr).append(td);
+                }
+
+                $(statisticsTable).append(tr);
+                indexOfRow++;
+            }
+        } else {
+            let tr = document.createElement("tr");
+            let td = document.createElement("td");
+
+            $(tr).attr("data-index", -1);
+            $(td).attr("colspan", 4);
+            $(td).html("<b>You haven't done yet any requests.</b>");
+            $(tr).append(td);
+            $(statisticsTable).append(tr);
+        }
+    }
 });

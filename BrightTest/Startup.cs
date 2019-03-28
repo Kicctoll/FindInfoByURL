@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
 using BrightTest.Models;
+using BrightTest.Utilities;
 using Newtonsoft.Json;
 
 namespace BrightTest
@@ -44,6 +46,8 @@ namespace BrightTest
 
             services.AddSingleton<HttpClient>();
 
+            AddMapping(services);
+
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
@@ -69,6 +73,17 @@ namespace BrightTest
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void AddMapping(IServiceCollection services)
+        {
+            var mapConfiguration = new MapperConfiguration(config =>
+            {
+                config.AddProfile<MappingProfile>();
+            });
+            var mapper = mapConfiguration.CreateMapper();
+
+            services.AddSingleton<IMapper>(mapper);
         }
     }
 }

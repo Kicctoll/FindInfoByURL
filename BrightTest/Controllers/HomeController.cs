@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using BrightTest.ViewModels;
 using BrightTest.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace BrightTest.Controllers
 {
@@ -18,11 +18,13 @@ namespace BrightTest.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly RequestContext _context;
+        private readonly IMapper _mapper;
 
-        public HomeController(HttpClient httpClient, RequestContext context)
+        public HomeController(HttpClient httpClient, RequestContext context, IMapper mapper)
         {
             _httpClient = httpClient;
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -65,6 +67,14 @@ namespace BrightTest.Controllers
             }
 
             return BadRequest(new { Message = "The passed url is invalid!" });
+        }
+
+        [HttpGet("requests")]
+        public async Task<IEnumerable<RequestViewModel>> GetAllRequests()
+        {
+            var requests = await _context.Requests.ToListAsync();
+
+            return _mapper.Map<List<Request>, List<RequestViewModel>>(requests);
         }
     }
 }
